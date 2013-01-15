@@ -47,7 +47,7 @@ class EtuDev_Zend_Util_App {
 		}
 
 
-		$config = static::getBootstrap()->getOptions();
+		$config = static::getConfig();
 
 		if (!$discArray) {
 			return $config;
@@ -69,6 +69,36 @@ class EtuDev_Zend_Util_App {
 		}
 
 		return $ops;
+	}
+
+	/**
+	 * @var array
+	 */
+	static protected $config;
+
+	/**
+	 * @param array|Zend_Config $config
+	 */
+	static public function setConfig($config) {
+		if ($config instanceof Zend_Config) {
+			static::$config = $config->toArray();
+		} else {
+			static::$config = $config;
+		}
+	}
+
+	/**
+	 * @return array
+	 */
+	static protected function getConfig() {
+		$bt = static::getBootstrap();
+
+		if ($bt) {
+			return $bt->getOptions();
+		}
+
+		//no bootstrap available, let's hope we do have config stored!
+		return static::$config;
 	}
 
 }
