@@ -17,16 +17,28 @@ class EtuDev_Zend_Application extends Zend_Application {
 		return 'appconfig_' . $this->getEnvironment() . '_' . sha1($file);
 	}
 
-	protected function _loadConfigCache(){
+	protected function _loadConfigCache() {
 		$configCache = new Zend_Cache_Core(array('automatic_serialization' => true));
-		$backend     = new Zend_Cache_Backend_Apc();
+
+		if (extension_loaded('xcache')) {
+			$backend_type = 'Xcache';
+		} elseif (extension_loaded('apc')) {
+			$backend_type = 'Apc';
+		} elseif (extension_loaded('memcache')) {
+			$backend_type = 'Memcached';
+		} else {
+			$backend_type = 'File';
+		}
+
+		$backend = Zend_Cache::_makeBackend($backend_type, array());
+
 		$configCache->setBackend($backend);
 		$this->_configCache = $configCache;
 	}
 
 	//Override
 	protected function _loadConfig($file) {
-		if(!$this->_configCache){
+		if (!$this->_configCache) {
 			$this->_loadConfigCache();
 		}
 		$suffix = strtolower(pathinfo($file, PATHINFO_EXTENSION));
@@ -36,7 +48,7 @@ class EtuDev_Zend_Application extends Zend_Application {
 
 		$configMTime = filemtime($file);
 
-		$cacheId        = $this->_cacheId($file);
+		$cacheId = $this->_cacheId($file);
 
 		//podemos quitar esto para acelerar, pero habría que borrar la cache manualmente en deploy entonces
 		$cacheLastMTime = $this->_configCache->test($cacheId);
