@@ -45,26 +45,28 @@ require_once 'Zend/Filter/Input.php';
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class EtuDev_Zend_Filter_Input extends Zend_Filter_Input {
+class EtuDev_Zend_Filter_Input extends Zend_Filter_Input
+{
 
-	/**
-	 * besides the parent behaviour, looks for the field in the _unknownFields array, to get it in case there was any filter but no validator.
-	 *
-	 * @param string $fieldName OPTIONAL
-	 *
-	 * @return mixed
-	 */
-	public function getUnescaped($fieldName = null) {
-		$res = parent::getUnescaped($fieldName);
-		if ($res !== null || $fieldName === null) {
-			return $res;
-		}
+    /**
+     * besides the parent behaviour, looks for the field in the _unknownFields array, to get it in case there was any filter but no validator.
+     *
+     * @param string $fieldName OPTIONAL
+     *
+     * @return mixed
+     */
+    public function getUnescaped($fieldName = null)
+    {
+        $res = parent::getUnescaped($fieldName);
+        if ($res !== null || $fieldName === null) {
+            return $res;
+        }
 
-		if (array_key_exists($fieldName, $this->_unknownFields)) {
-			return $this->_unknownFields[$fieldName];
-		}
+        if (array_key_exists($fieldName, $this->_unknownFields)) {
+            return $this->_unknownFields[$fieldName];
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }
